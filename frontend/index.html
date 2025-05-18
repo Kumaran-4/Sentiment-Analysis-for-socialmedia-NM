@@ -1,0 +1,88 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sentiment Analysis for Product Reviews</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f3;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    #container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h2>Sentiment Analysis for Product Reviews</h2>
+    <textarea id="reviewInput" placeholder="Type your product review here..."></textarea>
+    <button onclick="analyzeReview()">Analyze Sentiment</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function analyzeReview() {
+      const review = document.getElementById('reviewInput').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!review.trim()) {
+        resultDiv.textContent = "Please enter a review.";
+        return;
+      }
+
+      const response = await fetch('/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({review})
+      });
+
+      const data = await response.json();
+      resultDiv.innerHTML = `
+        Sentiment: <strong>${data.sentiment}</strong><br/>
+        Polarity Score: <strong>${data.polarity}</strong>
+      `;
+    }
+
+    // Optionally add Enter key support to send review
+    document.getElementById("reviewInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        analyzeReview();
+      }
+    });
+  </script>
+</body>
+</html>
